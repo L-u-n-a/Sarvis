@@ -19,7 +19,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("GET");
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl + url, config));
+        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
 
         if (error) { return Promise.reject("An Error" + error); }
 
@@ -30,7 +30,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("POST", body);
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl + url, config));
+        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
 
         if (error) { return Promise.reject(error); }
 
@@ -41,7 +41,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("PUT", body);
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl + url, config));
+        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
 
         if (error) { return Promise.reject(error); }
 
@@ -52,7 +52,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("DELETE", body);
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl + url, config));
+        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
 
         if (error) { return Promise.reject(error); }
 
