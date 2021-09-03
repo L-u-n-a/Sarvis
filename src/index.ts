@@ -42,48 +42,32 @@ export class Sarvis {
      * @param url - The URL the request will be send to. If a base_url was passed in the config, it will be added to that url.
      * @param customConfig - RequestInit.
      */
-    public get = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
+    public async get<Type>(url: string, customConfig?: RequestInit): Promise<Type> {
 
         const {buildUrl, finalConfig} = this.prepareRequest(url, "GET", undefined, customConfig);
 
-        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
-
-        if (error) { return Promise.reject("An Error" + error); }
-
-        return result!;
+        return this.excecuteRequest(buildUrl, finalConfig);
     };
 
-    public post = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
+    public async post<Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> {
 
         const {buildUrl, finalConfig} = this.prepareRequest(url, "POST", body, customConfig);
 
-        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
-
-        if (error) { return Promise.reject(error); }
-
-        return result!;
+        return this.excecuteRequest(buildUrl, finalConfig);
     };
 
-    public put = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
+    public async put<Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> {
 
         const {buildUrl, finalConfig} = this.prepareRequest(url, "PUT", body, customConfig);
 
-        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
-
-        if (error) { return Promise.reject(error); }
-
-        return result!;
+        return this.excecuteRequest(buildUrl, finalConfig);
     };
 
-    public delete = async <Type>(url: string, body?: any, customConfig?: RequestInit): Promise<Type> => {
+    public async delete<Type>(url: string, body?: any, customConfig?: RequestInit): Promise<Type> {
 
         const {buildUrl, finalConfig} = this.prepareRequest(url, "DELETE", body, customConfig);
 
-        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
-
-        if (error) { return Promise.reject(error); }
-
-        return result!;
+        return this.excecuteRequest(buildUrl, finalConfig);
     };
 
     public prepareRequest(url: string, method: string, body?: any, customConfig?: RequestInit): { buildUrl: string, finalConfig: RequestInit } {
@@ -93,6 +77,14 @@ export class Sarvis {
         const config = {...this.getBasicRequestConfig(method, body), ...customConfig};
 
         return { buildUrl: this.getApiUrl() + url, finalConfig: config};
+    }
+
+    public async excecuteRequest<Type>(buildUrl: string, finalConfig: RequestInit): Promise<Type | never> {
+        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
+
+        if (error) { return Promise.reject(error); }
+
+        return result!;
     }
 
     /**
