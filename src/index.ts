@@ -18,6 +18,12 @@ export class Sarvis {
     public config?: ISarvisConfig;
     public api_url: string | undefined;
 
+    public useBefore: undefined | ((url: string, config: RequestInit) => { url: string, config: RequestInit }) = undefined;
+    public useAfter: undefined | ((result: any) => any) = undefined;
+
+    // If true, returns the ftehc request before the JSON has been extracted. Default = false.
+    public returnFullRequest: boolean = false;
+
     constructor (config?: ISarvisConfig) {
         this.config = config;
         /**
@@ -33,11 +39,11 @@ export class Sarvis {
      * @param url - The URL the request will be send to. If a base_url was passed in the config, it will be added to that url.
      * @param customConfig - RequestInit.
      */
-    public get = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
+    public getNew = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("GET");
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
+        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
         if (error) { return Promise.reject("An Error" + error); }
 
@@ -48,7 +54,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("POST", body);
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
+        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
         if (error) { return Promise.reject(error); }
 
@@ -59,7 +65,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("PUT", body);
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
+        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
         if (error) { return Promise.reject(error); }
 
@@ -70,7 +76,7 @@ export class Sarvis {
 
         const config = customConfig ? customConfig : this.getBasicRequestConfig("DELETE", body);
 
-        const {result, error} = await this.fetchRequest<Type>(fetch(this.getApiUrl() + url, config));
+        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
         if (error) { return Promise.reject(error); }
 
@@ -106,24 +112,32 @@ export class Sarvis {
         return this.withAuthHeader(headers);
     }
 
-    /**
-     * This request takes a promise, executes it and attempts to get JSON data from it.
-     * The format in which it returns data should be easier to work with than the regular try catches usually implemted
-     * with promises.
-     * @param promise - The promise that will be executed.
-     *
-     * @Example const {result, error} = await fetchRequest<Type>(fetch("https://a-website.org"));
-     */
-    public async fetchRequest<T>(promise: Promise<Response>): Promise<{result: T | null, error: any | null}> {
-        try {
-            const result: Response = await promise;
+    public async fetchRequest<T>(requestUrl: string, requestConfig: RequestInit): Promise<{result: T | any | null, error: any | null}> {
+        try
+        {
+            if (this.useBefore) {
+                const {url, config} = this.useBefore(requestUrl, requestConfig);
+                requestUrl = url;
+                requestConfig = config;
+            }
+
+            let result: Response = await fetch(requestUrl, requestConfig);
+
+            if (this.useAfter) {
+                result = this.useAfter(result);
+            }
 
             if (!result.ok) { throw result; }
+
+            if (this.returnFullRequest) {
+                return { result, error: null };
+            }
 
             const json: T =  await result.json();
             return {result: json, error: null};
         }
-        catch(error: any) {
+        catch(error: any)
+        {
             return {result: null, error};
         }
     }
