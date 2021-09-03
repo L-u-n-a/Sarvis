@@ -39,9 +39,9 @@ export class Sarvis {
      * @param url - The URL the request will be send to. If a base_url was passed in the config, it will be added to that url.
      * @param customConfig - RequestInit.
      */
-    public getNew = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
+    public get = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
 
-        const config = customConfig ? customConfig : this.getBasicRequestConfig("GET");
+        const config = {...this.getBasicRequestConfig("GET"), ...customConfig};
 
         const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
@@ -52,7 +52,7 @@ export class Sarvis {
 
     public post = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
 
-        const config = customConfig ? customConfig : this.getBasicRequestConfig("POST", body);
+        const config = {...this.getBasicRequestConfig("POST", body), ...customConfig};
 
         const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
@@ -63,7 +63,7 @@ export class Sarvis {
 
     public put = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
 
-        const config = customConfig ? customConfig : this.getBasicRequestConfig("PUT", body);
+        const config = {...this.getBasicRequestConfig("PUT", body), ...customConfig};
 
         const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
@@ -74,7 +74,7 @@ export class Sarvis {
 
     public delete = async <Type>(url: string, body?: any, customConfig?: RequestInit): Promise<Type> => {
 
-        const config = customConfig ? customConfig : this.getBasicRequestConfig("DELETE", body);
+        const config = {...this.getBasicRequestConfig("DELETE", body), ...customConfig};
 
         const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
 
