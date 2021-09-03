@@ -44,6 +44,8 @@ export class Sarvis {
      */
     public get = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
 
+        this.api_url = this.createApiUrl();
+
         const config = {...this.getBasicRequestConfig("GET"), ...customConfig};
 
         const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
@@ -54,6 +56,8 @@ export class Sarvis {
     };
 
     public post = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
+
+        this.api_url = this.createApiUrl();
 
         const config = {...this.getBasicRequestConfig("POST", body), ...customConfig};
 
@@ -66,6 +70,8 @@ export class Sarvis {
 
     public put = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
 
+        this.api_url = this.createApiUrl();
+
         const config = {...this.getBasicRequestConfig("PUT", body), ...customConfig};
 
         const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
@@ -76,6 +82,8 @@ export class Sarvis {
     };
 
     public delete = async <Type>(url: string, body?: any, customConfig?: RequestInit): Promise<Type> => {
+
+        this.api_url = this.createApiUrl();
 
         const config = {...this.getBasicRequestConfig("DELETE", body), ...customConfig};
 
