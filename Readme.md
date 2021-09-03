@@ -23,6 +23,12 @@ const sarvis = new Sarvis({
     // "Bearer YOUR_BEARER_TOKEN_HERE".
     authorization: "Bearer a_token_here"
 });
+
+// You can access and update the configuration through sarvis.config:
+const config: ISarvisConfig = sarvis.config;
+
+// Let's update the authorization for example:
+sarvis.config.authorization = "Bearer a_token_here";
 ```
 
 ### Requests
