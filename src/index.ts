@@ -44,11 +44,9 @@ export class Sarvis {
      */
     public get = async <Type>(url: string, customConfig?: RequestInit): Promise<Type> => {
 
-        this.api_url = this.createApiUrl();
+        const {buildUrl, finalConfig} = this.prepareRequest(url, "GET", undefined, customConfig);
 
-        const config = {...this.getBasicRequestConfig("GET"), ...customConfig};
-
-        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
+        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
 
         if (error) { return Promise.reject("An Error" + error); }
 
@@ -57,11 +55,9 @@ export class Sarvis {
 
     public post = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
 
-        this.api_url = this.createApiUrl();
+        const {buildUrl, finalConfig} = this.prepareRequest(url, "POST", body, customConfig);
 
-        const config = {...this.getBasicRequestConfig("POST", body), ...customConfig};
-
-        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
+        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
 
         if (error) { return Promise.reject(error); }
 
@@ -70,11 +66,9 @@ export class Sarvis {
 
     public put = async <Type>(url: string, body: any, customConfig?: RequestInit): Promise<Type> => {
 
-        this.api_url = this.createApiUrl();
+        const {buildUrl, finalConfig} = this.prepareRequest(url, "PUT", body, customConfig);
 
-        const config = {...this.getBasicRequestConfig("PUT", body), ...customConfig};
-
-        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
+        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
 
         if (error) { return Promise.reject(error); }
 
@@ -83,16 +77,23 @@ export class Sarvis {
 
     public delete = async <Type>(url: string, body?: any, customConfig?: RequestInit): Promise<Type> => {
 
-        this.api_url = this.createApiUrl();
+        const {buildUrl, finalConfig} = this.prepareRequest(url, "DELETE", body, customConfig);
 
-        const config = {...this.getBasicRequestConfig("DELETE", body), ...customConfig};
-
-        const {result, error} = await this.fetchRequest<Type>(this.getApiUrl() + url, config);
+        const {result, error} = await this.fetchRequest<Type>(buildUrl, finalConfig);
 
         if (error) { return Promise.reject(error); }
 
         return result!;
     };
+
+    public prepareRequest(url: string, method: string, body?: any, customConfig?: RequestInit): { buildUrl: string, finalConfig: RequestInit } {
+        // Update the api_url in case the config settings have changed.
+        this.api_url = this.createApiUrl();
+
+        const config = {...this.getBasicRequestConfig(method, body), ...customConfig};
+
+        return { buildUrl: this.getApiUrl() + url, finalConfig: config};
+    }
 
     /**
      * The basic request config used for every request.
