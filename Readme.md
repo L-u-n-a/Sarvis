@@ -66,12 +66,12 @@ const result = await sarvis.get("/1");
 For all other requests, add a body after the URL:
 
 ```ts
-const postResult = sarvis.post<TodoDto>("/1", body);
+const postResult = await sarvis.post<TodoDto>("/1", body);
 
-const putResult = sarvis.put<TodoDto>("/1", body);
+const putResult = await sarvis.put<TodoDto>("/1", body);
 
 // The body for a DELETE request is optional.
-const deleteResult = sarvis.post<boolean>("/1", body);
+const deleteResult = await sarvis.post<boolean>("/1", body);
 ```
 
 ### Custom Configuration
@@ -108,3 +108,15 @@ sarvis.useAfter = (result: any) => {
 };
 ```
 
+### Get the Request before JSON conversion
+
+By default, request results are converted to JSON and then given back to the user.
+Of course not all request have a return type of JSON, or perhaps you want to have a look at the complete response.
+
+To turn off JSON conversion for all Requests, set:
+
+```ts
+sarvis.returnFullRequest = true;
+```
+
+Every request will now return the complete response.
