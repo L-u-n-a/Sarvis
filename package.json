@@ -1,6 +1,6 @@
 {
   "name": "sarvis",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A simple, small api that helps organise and execute your HTTP requests with excellent Typescript support. build on top of the browser native fetch api.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
