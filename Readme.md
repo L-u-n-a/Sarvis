@@ -106,7 +106,7 @@ sarvis.useBefore = (url: string, config: RequestInit) => {
     return { url, config };
 };
 
-// Executed after every request, before the result is converted to JSON
+// Executed after every request, if returnFullRequest is set to true, it will return the full Request object.
 sarvis.useAfter = (result: any) => {
     result["newValue"] = "Some Test value for demo purposes.";
 

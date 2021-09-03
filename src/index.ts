@@ -123,17 +123,21 @@ export class Sarvis {
 
             let result: Response = await fetch(requestUrl, requestConfig);
 
-            if (this.useAfter) {
-                result = this.useAfter(result);
-            }
-
             if (!result.ok) { throw result; }
 
             if (this.returnFullRequest) {
+                if (this.useAfter) {
+                    result = this.useAfter(result);
+                }
                 return { result, error: null };
             }
 
-            const json: T =  await result.json();
+            let json: T =  await result.json();
+
+            if (this.useAfter) {
+                json = this.useAfter(json);
+            }
+
             return {result: json, error: null};
         }
         catch(error: any)
