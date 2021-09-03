@@ -25,6 +25,9 @@ export class Sarvis {
     public returnFullRequest: boolean = false;
 
     constructor (config?: ISarvisConfig) {
+        if (!config) {
+            config = {}
+        }
         this.config = config;
         /**
          * If a base url, with optionally a base path and/or port are passed to the Sarvis instance, this variable is
