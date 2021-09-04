@@ -160,18 +160,8 @@ export class Sarvis {
         if (!this.config || !this.config.base_url) {
             return undefined;
         }
-
-        let url = this.config.base_url;
-
-        if (this.config.base_path) {
-            url = url + this.config.base_path;
-        }
-
-        if (this.config.port) {
-            url = url + this.config.port;
-        }
-
-        return url;
+ 
+        return `${this.config.base_url}${this.config.port ? ":"+this.config.port : ""}${this.config.base_path ? this.config.base_path : ""}`
     }
 
     private getApiUrl(): string {
