@@ -18,7 +18,13 @@ export class Sarvis {
     public config?: ISarvisConfig;
     public api_url: string | undefined;
 
+    // Executed before an http request is send.
     public useBefore: undefined | ((url: string, config: RequestInit) => { url: string, config: RequestInit }) = undefined;
+        // Executed directly after performing an http request. Executed before the onError function.
+    public onResponse: undefined | ((response: Response) => any) = undefined;
+    // Executed if a request comes back with a statis that is not OK. Executed after onResponse.
+    public onError: undefined | ((response: Response) => any) = undefined;
+    // Executed after an http request has been send, and only if no error occured. Executed (in order) after: onResponse, onError.
     public useAfter: undefined | ((result: any) => any) = undefined;
 
     // If true, returns the ftehc request before the JSON has been extracted. Default = false.
@@ -127,7 +133,18 @@ export class Sarvis {
 
             let result: Response = await fetch(requestUrl, requestConfig);
 
-            if (!result.ok) { throw result; }
+            if (this.onResponse) {
+                this.onResponse(result);
+            }
+
+            if (!result.ok) { 
+                
+                if (this.onError) {
+                    this.onError(result);
+                }
+
+                throw result; 
+            }
 
             if (this.returnFullRequest) {
                 if (this.useAfter) {
